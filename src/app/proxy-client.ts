@@ -7,34 +7,39 @@ import {CdsHooksCard, CdsHooksResponse} from './cds-hooks.protocol';
 @Injectable({providedIn: "root"})
 export class ProxyClient {
 
-  private cprsHandle: string;
-
   constructor(
-    private readonly httpClient : HttpClient,
-    route: ActivatedRoute) {
-      route.queryParamMap.subscribe(map => {
-        this.cprsHandle = map.get('handle');
-      });
+    private readonly httpClient: HttpClient,
+    private readonly route: ActivatedRoute) {
+  }
+
+  private getHandle(): Observable<String> {
+    return this.route.queryParamMap.pipe(
+      map(map => map.get('handle')),
+      filter(handle => handle != null),
+      timeout(2000),
+      take(1));
   }
 
   nextInstance(): Observable<string> {
-    return this.httpClient.get(`next/${this.cprsHandle}`, {
-      observe: 'response',
-      responseType: 'text'
-    }).pipe(
-      repeat({delay: 500, count: 50}),
-      map(r => r.ok ? r.body : null),
-      timeout(20000),
-      filter(r => r !== ''),
-      take(1)
-    );
+    return this.getHandle().pipe(switchMap(handle =>
+      this.httpClient.get(`../../next/${handle}`, {
+        observe: 'response',
+        responseType: 'text'
+      }).pipe(
+        repeat({delay: 500, count: 50}),
+        map(r => r.ok ? r.body : null),
+        timeout(20000),
+        filter(r => r !== ''),
+        take(1)
+      )));
   }
 
   getResponse(instance: string): Observable<CdsHooksResponse> {
-    return <Observable<any>> this.httpClient.get(`response/${this.cprsHandle}/${instance}`, {
-      observe: 'body',
-      responseType: 'json'
-    })
+    return this.getHandle().pipe(switchMap(handle =>
+      <Observable<any>>this.httpClient.get(`../../response/${handle}/${instance}`, {
+        observe: 'body',
+        responseType: 'json'
+      })));
   }
 
   nextResponse(): Observable<CdsHooksResponse> {
@@ -44,7 +49,8 @@ export class ProxyClient {
   }
 
   abortAll(): void {
-    const s: Subscription = this.httpClient.get(`abort/${this.cprsHandle}`).subscribe(_ => s.unsubscribe());
+    const s: Subscription = this.getHandle().pipe(switchMap(handle =>
+      this.httpClient.get(`../../abort/${handle}`))).subscribe(_ => s.unsubscribe());
   }
 
   processResponse(response: CdsHooksResponse): void {

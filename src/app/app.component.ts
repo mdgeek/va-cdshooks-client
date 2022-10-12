@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 import {ProxyClient} from './proxy-client';
 
 @Component({
@@ -6,8 +6,16 @@ import {ProxyClient} from './proxy-client';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
 
-  constructor(proxyClient: ProxyClient) {
+  response: string;
+
+  constructor(private readonly proxyClient: ProxyClient) {
+  }
+
+  ngAfterViewInit(): void {
+    this.proxyClient.nextResponse().subscribe(r => {
+      this.response = JSON.stringify(r,null,2);
+    })
   }
 }
