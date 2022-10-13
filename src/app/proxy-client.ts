@@ -8,6 +8,8 @@ export class ProxyClient {
 
   private readonly handle: string;
 
+  private readonly proxyUrl: string;
+
   private readonly queryParameters: {[name: string]: string} = {};
 
   readonly noclose: boolean;
@@ -17,15 +19,23 @@ export class ProxyClient {
     this.parseQueryString();
     this.noclose = this.queryParameters['noclose'] != null;
     this.handle = this.queryParameters['handle'];
+    let proxy = decodeURIComponent(this.queryParameters['proxy']);
+    while (proxy.endsWith('/')) proxy = proxy.substring(0, proxy.length - 1);
+    this.proxyUrl = proxy + '/';
 
     if (this.handle == null) {
       throw new Error('No handle specified in query string.')
     }
   }
 
+  private getProxyEndpoint(path: string, ...params : string[]) : string {
+    params.forEach((p, i) => path = path.replace(`{${i}}`, p));
+    return this.proxyUrl + path;
+  }
+
   private parseQueryString(): void {
-    const qs: String = window.location.search;
-    const params: String[] = qs == null ? [] : qs.substring(1).split('&');
+    const qs: string = window.location.search;
+    const params: string[] = qs == null ? [] : qs.substring(1).split('&');
     params.forEach(p => {
       const nv: string[] = p.split('=', 2);
       this.queryParameters[nv[0].trim()] = nv[1]?.trim() || '';
@@ -33,7 +43,8 @@ export class ProxyClient {
   }
 
   nextInstance(): Observable<string> {
-    return this.httpClient.get(`../../next/${this.handle}`, {
+    const url: string = this.getProxyEndpoint('next/{0}', this.handle);
+    return this.httpClient.get(url, {
       observe: 'response',
       responseType: 'text'
     }).pipe(
@@ -46,7 +57,8 @@ export class ProxyClient {
   }
 
   getResponse(instance: string): Observable<CdsHooksResponse> {
-    return <Observable<any>>this.httpClient.get(`../../response/${this.handle}/${instance}`, {
+    const url: string = this.getProxyEndpoint('response/{0}/{1}', this.handle, instance);
+    return <Observable<any>>this.httpClient.get(url, {
       observe: 'body',
       responseType: 'json'
     });
@@ -59,7 +71,8 @@ export class ProxyClient {
   }
 
   abortAll(): void {
-    const s: Subscription = this.httpClient.get(`../../abort/${this.handle}`).subscribe(_ => s.unsubscribe());
+    const url: string = this.getProxyEndpoint('abort/{0}', this.handle);
+    const s: Subscription = this.httpClient.get(url).subscribe(_ => s.unsubscribe());
   }
 
   processResponse(response: CdsHooksResponse): void {
