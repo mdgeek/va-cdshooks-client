@@ -1,6 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {ProxyClient} from './proxy-client';
 import {CdsHooksResponse} from './cds-hooks.protocol';
+import {noop} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -17,16 +18,20 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.proxyClient.nextResponse().subscribe({
       next: r => this.processResponse(r),
-      complete: () => window.close(),
-      error: e => this.status = e
+      complete: () => this.close(),
+      error: e => this.close()
     });
   }
 
   private processResponse(response: CdsHooksResponse): void {
     if (response == null) {
-      window.close();
+      this.close();
     }
 
     this.status = JSON.stringify(response, null, 2);
+  }
+
+  private close(): void {
+    this.proxyClient.noclose ? noop() : window.close();
   }
 }
