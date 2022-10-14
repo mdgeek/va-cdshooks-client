@@ -10,14 +10,14 @@ export class ProxyClient {
 
   private readonly proxyUrl: string;
 
-  private readonly queryParameters: {[name: string]: string} = {};
+  private readonly queryParameters: { [name: string]: string } = {};
 
-  readonly noclose: boolean;
+  readonly debug: boolean;
 
   constructor(
     private readonly httpClient: HttpClient) {
     this.parseQueryString();
-    this.noclose = this.queryParameters['noclose'] != null;
+    this.debug = this.queryParameters['debug'] != null;
     this.handle = this.queryParameters['handle'];
     let proxy = decodeURIComponent(this.queryParameters['proxy']);
     while (proxy.endsWith('/')) proxy = proxy.substring(0, proxy.length - 1);
@@ -28,7 +28,7 @@ export class ProxyClient {
     }
   }
 
-  private getProxyEndpoint(path: string, ...params : string[]) : string {
+  private getProxyEndpoint(path: string, ...params: string[]): string {
     params.forEach((p, i) => path = path.replace(`{${i}}`, p));
     return this.proxyUrl + path;
   }
@@ -81,7 +81,6 @@ export class ProxyClient {
     }
   }
 
-  private processCard(card: CdsHooksCard) {
-    alert(card);
+  private processCard(card: CdsHooksCard): void {
   }
 }

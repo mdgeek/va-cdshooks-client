@@ -38,7 +38,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private close(): void {
-    this.proxyClient.noclose ? noop() : window.close();
+    this.proxyClient.debug ? noop() : window.close();
   }
 
   private processCard(card: CdsHooksCard) {
