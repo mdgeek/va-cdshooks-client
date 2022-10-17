@@ -120,6 +120,8 @@ export interface CdsHooksResponse {
    * cards, but this specification recommends displaying suggestions using buttons, and links using underlined text.
    */
   cards: CdsHooksCard[];
+
+  _hookInstance?: string;
 }
 
 /**

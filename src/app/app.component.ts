@@ -1,6 +1,6 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {ProxyClient} from './proxy-client';
-import {CdsHooksCard, CdsHooksResponse} from './cds-hooks.protocol';
+import {CdsHooksResponse} from './cds-hooks.protocol';
 import {noop} from 'rxjs';
 
 @Component({
@@ -32,8 +32,6 @@ export class AppComponent implements AfterViewInit {
       return;
     }
 
-    response.cards.forEach(card => this.processCard(card));
-
     this.status = JSON.stringify(response, null, 2);
   }
 
@@ -41,6 +39,4 @@ export class AppComponent implements AfterViewInit {
     this.proxyClient.debug ? noop() : window.close();
   }
 
-  private processCard(card: CdsHooksCard) {
-  }
 }

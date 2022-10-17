@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {filter, map, Observable, of, repeat, Subscription, switchMap, take, timeout} from 'rxjs';
+import {filter, map, Observable, of, repeat, Subscription, switchMap, take, tap, timeout} from 'rxjs';
 import {CdsHooksCard, CdsHooksResponse} from './cds-hooks.protocol';
 
 @Injectable({providedIn: "root"})
@@ -12,6 +12,8 @@ export class ProxyClient {
 
   private readonly queryParameters: { [name: string]: string } = {};
 
+  private readonly sessionParameters: any;
+
   readonly debug: boolean;
 
   constructor(
@@ -19,9 +21,15 @@ export class ProxyClient {
     this.parseQueryString();
     this.debug = this.queryParameters['debug'] != null;
     this.handle = this.queryParameters['handle'];
-    let proxy = decodeURIComponent(this.queryParameters['proxy']);
+    let proxy = decodeURIComponent(this.queryParameters['proxy'] || '');
     while (proxy.endsWith('/')) proxy = proxy.substring(0, proxy.length - 1);
     this.proxyUrl = proxy + '/';
+    const session = this.queryParameters['session'];
+
+    if (session != null) {
+      this.sessionParameters = JSON.parse(window.localStorage.getItem(session));
+      window.localStorage.removeItem(session);
+    }
 
     if (this.handle == null) {
       throw new Error('No handle specified in query string.')
@@ -58,10 +66,14 @@ export class ProxyClient {
 
   getResponse(instance: string): Observable<CdsHooksResponse> {
     const url: string = this.getProxyEndpoint('response/{0}/{1}', this.handle, instance);
-    return <Observable<any>>this.httpClient.get(url, {
+    return this.httpClient.get(url, {
       observe: 'body',
       responseType: 'json'
-    });
+    }).pipe(map((r: any) => {
+      const resp: CdsHooksResponse = r;
+      resp._hookInstance = instance;
+      return resp;
+    }));
   }
 
   nextResponse(): Observable<CdsHooksResponse> {

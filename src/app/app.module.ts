@@ -5,20 +5,37 @@ import {AppComponent} from './app.component';
 import {CommonModule} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
 import {RouterModule, Routes} from '@angular/router';
+import {ShowdownModule} from 'ngx-showdown';
+import {MatTabsModule} from '@angular/material/tabs';
+import {ResponseContainerComponent} from './response-container.component';
+import {CardContainerComponent} from './card-container.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatCardModule} from '@angular/material/card';
+import {MatTableModule} from '@angular/material/table';
+import {MatButtonModule} from '@angular/material/button';
 
 const routes: Routes = [
+  {path: 'response', component: ResponseContainerComponent},
   {path: '**', component: AppComponent}
 ];
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ResponseContainerComponent,
+    CardContainerComponent
   ],
   imports: [
     BrowserModule,
     CommonModule,
     HttpClientModule,
-    RouterModule.forRoot(routes)
+    ShowdownModule,
+    RouterModule.forRoot(routes),
+    MatTabsModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatTableModule,
+    MatButtonModule
   ],
   exports: [
     RouterModule

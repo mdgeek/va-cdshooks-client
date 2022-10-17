@@ -1,0 +1,11 @@
+.cdshooks-card-info {
+
+}
+
+.cdshooks-card-warning {
+  background-color: gold;
+}
+
+.cdshooks-card-critical {
+  background-color: red;
+}
