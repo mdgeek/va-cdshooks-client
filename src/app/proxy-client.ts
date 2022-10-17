@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {filter, map, Observable, of, repeat, Subscription, switchMap, take, tap, timeout} from 'rxjs';
-import {CdsHooksCard, CdsHooksResponse} from './cds-hooks.protocol';
+import {filter, map, Observable, of, repeat, Subscription, switchMap, take, timeout} from 'rxjs';
+import {CdsHooksResponse} from './cds-hooks.protocol';
 
 @Injectable({providedIn: "root"})
 export class ProxyClient {
@@ -10,30 +10,38 @@ export class ProxyClient {
 
   private readonly proxyUrl: string;
 
-  private readonly queryParameters: { [name: string]: string } = {};
-
-  private readonly sessionParameters: any;
+  private readonly parameters: { [name: string]: string } = {};
 
   readonly debug: boolean;
+
+  readonly hasSession: boolean;
 
   constructor(
     private readonly httpClient: HttpClient) {
     this.parseQueryString();
-    this.debug = this.queryParameters['debug'] != null;
-    this.handle = this.queryParameters['handle'];
-    let proxy = decodeURIComponent(this.queryParameters['proxy'] || '');
-    while (proxy.endsWith('/')) proxy = proxy.substring(0, proxy.length - 1);
-    this.proxyUrl = proxy + '/';
-    const session = this.queryParameters['session'];
+    const session = this.parameters['session'];
+    this.hasSession = session != null;
 
-    if (session != null) {
-      this.sessionParameters = JSON.parse(window.localStorage.getItem(session));
+    if (this.hasSession) {
+      this.parameters = JSON.parse(window.localStorage.getItem(session));
       window.localStorage.removeItem(session);
     }
 
-    if (this.handle == null) {
-      throw new Error('No handle specified in query string.')
+    this.debug = this.parameters['debug'] != null;
+    this.handle = this.parameters['handle'];
+
+    if (!this.hasSession && this.handle == null) {
+      throw new Error('No handle specified in query string.');
     }
+
+    let proxy = decodeURIComponent(this.parameters['proxy'] || '');
+    while (proxy.endsWith('/')) proxy = proxy.substring(0, proxy.length - 1);
+    this.proxyUrl = proxy + '/';
+
+  }
+
+  getParameter(name: string): string {
+    return this.parameters[name];
   }
 
   private getProxyEndpoint(path: string, ...params: string[]): string {
@@ -46,7 +54,7 @@ export class ProxyClient {
     const params: string[] = qs == null ? [] : qs.substring(1).split('&');
     params.forEach(p => {
       const nv: string[] = p.split('=', 2);
-      this.queryParameters[nv[0].trim()] = nv[1]?.trim() || '';
+      this.parameters[nv[0].trim()] = nv[1]?.trim() || '';
     })
   }
 
@@ -87,12 +95,10 @@ export class ProxyClient {
     const s: Subscription = this.httpClient.get(url).subscribe(_ => s.unsubscribe());
   }
 
-  processResponse(response: CdsHooksResponse): void {
-    for (const card of response.cards || []) {
-      this.processCard(card);
+  createSessionParams(instance: string): any {
+    return {
+      ...this.parameters,
+      instance
     }
-  }
-
-  private processCard(card: CdsHooksCard): void {
   }
 }

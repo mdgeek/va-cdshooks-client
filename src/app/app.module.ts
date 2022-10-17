@@ -13,9 +13,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatCardModule} from '@angular/material/card';
 import {MatTableModule} from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
+import {PollingComponent} from './polling.component';
 
 const routes: Routes = [
-  {path: 'response', component: ResponseContainerComponent},
   {path: '**', component: AppComponent}
 ];
 
@@ -23,7 +23,8 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     ResponseContainerComponent,
-    CardContainerComponent
+    CardContainerComponent,
+    PollingComponent
   ],
   imports: [
     BrowserModule,

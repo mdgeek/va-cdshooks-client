@@ -1,9 +1,9 @@
-<ng-container>
+<ng-container *ngIf="response != null">
   <div class="cdshooks-main-header">
   </div>
-  <mat-tab-group>
+  <mat-tab-group selectedIndex="0">
     <mat-tab *ngFor="let card of response.cards"
-             [label]="card.summary"
+             [label]="card.summary || card.indicator || 'Untitled'"
              [matTooltip]="card.detail"
              [ngClass]="'cdshooks-card-' + card.indicator"
     >

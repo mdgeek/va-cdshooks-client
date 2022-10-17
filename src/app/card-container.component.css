@@ -9,3 +9,26 @@
 .cdshooks-card-critical {
   background-color: red;
 }
+
+.cdshooks-card-source {
+  display: flex;
+  align-items: center;
+  border-top: 1px double gray;
+}
+
+.cdshooks-card-source > img {
+  max-width: 400px;
+  max-height: 400px;
+}
+
+.cdshooks-card table > thead > tr > th:first-child {
+  width: 2em;
+}
+
+.cdshooks-card table > thead > tr {
+  height: 0;
+}
+
+.cdshooks-card table > tbody > tr {
+  vertical-align: middle;
+}

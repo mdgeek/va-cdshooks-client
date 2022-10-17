@@ -1,42 +1,15 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {Component, ViewEncapsulation} from '@angular/core';
 import {ProxyClient} from './proxy-client';
-import {CdsHooksResponse} from './cds-hooks.protocol';
-import {noop} from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent {
 
-  status: string = 'Processing CDSHooks trigger...';
-
-  constructor(private readonly proxyClient: ProxyClient) {
-  }
-
-  ngAfterViewInit(): void {
-    this.proxyClient.nextResponse().subscribe({
-      next: r => this.processResponse(r),
-      complete: () => this.close(),
-      error: e => this.close()
-    });
-  }
-
-  private processResponse(response: CdsHooksResponse): void {
-    if (response == null) {
-      this.close();
-    }
-
-    if (!response.cards?.length) {
-      return;
-    }
-
-    this.status = JSON.stringify(response, null, 2);
-  }
-
-  private close(): void {
-    this.proxyClient.debug ? noop() : window.close();
+  constructor(readonly proxyClient: ProxyClient) {
   }
 
 }

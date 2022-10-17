@@ -1,14 +1,15 @@
-import {Component, Input} from '@angular/core';
-import {CdsHooksAction, CdsHooksCard, CdsHooksLink, CdsHooksResponse} from './cds-hooks.protocol';
+import {Component, Input, ViewEncapsulation} from '@angular/core';
+import {CdsHooksAction, CdsHooksCard, CdsHooksLink} from './cds-hooks.protocol';
 
 @Component({
   selector: 'cdshooks-card',
   templateUrl: './card-container.component.html',
-  styleUrls: ['./card-container.component.css']
+  styleUrls: ['./card-container.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class CardContainerComponent {
 
-  displayedColumns: string[] = ['Recommended', 'Description', 'Actions'];
+  displayedColumns: string[] = ['recommended', 'label', 'actions'];
 
   @Input()
   card: CdsHooksCard;
@@ -19,6 +20,5 @@ export class CardContainerComponent {
   }
 
   onActionClick(action: CdsHooksAction<any>) {
-
   }
 }

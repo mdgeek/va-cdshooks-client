@@ -209,6 +209,13 @@ export interface CdsHooksSuggestion {
    * such that a user selecting a suggestion selects all of the actions within it.
    */
   actions?: CdsHooksAction<any>[];
+  /**
+   * When there are multiple suggestions, allows a service to indicate that a specific suggestion is recommended from
+   * all the available suggestions on the card. CDS Hooks clients may choose to influence their UI based on this value,
+   * such as pre-selecting, or highlighting recommended suggestions. Multiple suggestions MAY be recommended,
+   * if card.selectionBehavior is any.
+   */
+  isRecommended?: boolean;
 }
 
 /**
