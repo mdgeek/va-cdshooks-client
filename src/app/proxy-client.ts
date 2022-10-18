@@ -70,7 +70,7 @@ export class ProxyClient {
       responseType: 'json'
     }).pipe(
       repeat({delay: 500, count: 50}),
-      map(r => r.ok ? <InstanceHandle> r.body : null),
+      map(r => r.ok ? <InstanceHandle>r.body : null),
       timeout(20000),
       filter(r => r != null),
       take(1)
@@ -79,14 +79,10 @@ export class ProxyClient {
 
   getResponse(handle: InstanceHandle): Observable<CdsHooksResponse> {
     const url: string = this.getProxyEndpoint('response/{0}/{1}', this.batchId, handle.hookInstance);
-    return this.httpClient.get(url, {
+    return <Observable<CdsHooksResponse>>this.httpClient.get(url, {
       observe: 'body',
       responseType: 'json'
-    }).pipe(map((r: any) => {
-      const resp: CdsHooksResponse = r;
-      resp._instanceHandle = handle;
-      return resp;
-    }));
+    });
   }
 
   nextResponse(): Observable<CdsHooksResponse> {

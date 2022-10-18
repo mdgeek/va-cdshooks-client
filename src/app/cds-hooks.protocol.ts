@@ -122,7 +122,6 @@ export interface CdsHooksResponse {
    */
   cards: CdsHooksCard[];
 
-  _instanceHandle?: InstanceHandle;
 }
 
 /**
