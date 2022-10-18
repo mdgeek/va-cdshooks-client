@@ -11,7 +11,6 @@ import {ResponseContainerComponent} from './response-container.component';
 import {CardContainerComponent} from './card-container.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatCardModule} from '@angular/material/card';
-import {MatTableModule} from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
 import {PollingComponent} from './polling.component';
 
@@ -35,7 +34,6 @@ const routes: Routes = [
     MatTabsModule,
     MatTooltipModule,
     MatCardModule,
-    MatTableModule,
     MatButtonModule
   ],
   exports: [

@@ -9,8 +9,6 @@ import {CdsHooksAction, CdsHooksCard, CdsHooksLink} from './cds-hooks.protocol';
 })
 export class CardContainerComponent {
 
-  displayedColumns: string[] = ['label', 'actions'];
-
   @Input()
   card: CdsHooksCard;
 
@@ -20,5 +18,6 @@ export class CardContainerComponent {
   }
 
   onActionClick(action: CdsHooksAction<any>) {
+    alert('Action was clicked.')
   }
 }

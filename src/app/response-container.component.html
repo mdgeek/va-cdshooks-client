@@ -2,7 +2,7 @@
   <div class="cdshooks-main-header">
   </div>
   <mat-tab-group selectedIndex="0">
-    <mat-tab *ngFor="let card of response.cards"
+    <mat-tab *ngFor="let card of response.cards; let index"
              [label]="card.summary || card.indicator || 'Untitled'"
              [matTooltip]="card.detail"
              [ngClass]="'cdshooks-card-' + card.indicator"

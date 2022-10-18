@@ -10,6 +10,11 @@
   background-color: red;
 }
 
+.cdshooks-card-detail {
+  border: 1px double gray;
+  background-color: lightgoldenrodyellow;
+}
+
 .cdshooks-card-source {
   display: flex;
   align-items: center;
@@ -21,20 +26,37 @@
   max-height: 400px;
 }
 
-.cdshooks-card table > thead > tr > th:first-child {
-  width: 2em;
-}
-
-.cdshooks-card table > thead > tr {
-  height: 0;
-}
-
-.cdshooks-card table > tbody > tr {
-  vertical-align: middle;
+.cdshooks-card .mat-card-title {
+  font-weight: bold;
 }
 
 .cdshooks-card .mat-card-subtitle {
+  border-bottom: 1px solid gray;
+  background-color: lightblue;
+  padding: 4px;
+}
+
+.cdshooks-card-suggestion {
+  display: flex;
+  border-top: 1px solid lightgray;
   border-bottom: 1px solid lightgray;
+  align-items: center;
+}
+
+.cdshooks-card-suggestion > span:first-child {
+  flex: 1;
+}
+
+.cdshooks-card-suggestion > span:last-child {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.cdshooks-card-suggestion > span:last-child > button {
+  margin-bottom: 2px;
+  margin-top: 2px;
 }
 
 .cdshooks-recommended::before {
