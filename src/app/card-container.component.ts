@@ -9,7 +9,7 @@ import {CdsHooksAction, CdsHooksCard, CdsHooksLink} from './cds-hooks.protocol';
 })
 export class CardContainerComponent {
 
-  displayedColumns: string[] = ['recommended', 'label', 'actions'];
+  displayedColumns: string[] = ['label', 'actions'];
 
   @Input()
   card: CdsHooksCard;

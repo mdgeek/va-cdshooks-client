@@ -32,3 +32,11 @@
 .cdshooks-card table > tbody > tr {
   vertical-align: middle;
 }
+
+.cdshooks-card .mat-card-subtitle {
+  border-bottom: 1px solid lightgray;
+}
+
+.cdshooks-recommended::before {
+  content: '*'
+}
