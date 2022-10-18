@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ViewEncapsulation} from '@angular/core';
-import {ProxyClient} from './proxy-client';
+import {InstanceHandle, ProxyClient} from './proxy-client';
 import {noop} from 'rxjs';
 
 @Component({
@@ -25,20 +25,20 @@ export class PollingComponent implements AfterViewInit {
     });
   }
 
-  private processInstance(instance: string): void {
+  private processInstance(instance: InstanceHandle): void {
     if (instance == null) {
       this.close();
       return;
     }
 
-    if (instance.length === 0) {
+    if (instance.hookInstance == null) {
       return;
     }
 
     this.status = `Processing response ${instance}...`;
     this.count++;
-    window.localStorage.setItem(instance, JSON.stringify(this.proxyClient.createSessionParams(instance)));
-    window.open(`./?session=${instance}`, instance);
+    window.localStorage.setItem(instance.hookInstance, JSON.stringify(this.proxyClient.createSessionParams(instance)));
+    window.open(`./?session=${instance.hookInstance}`, instance.hookId);
   }
 
   private close(): void {

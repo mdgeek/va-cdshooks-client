@@ -17,7 +17,12 @@ export class ResponseContainerComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.proxyClient.getResponse(this.proxyClient.getParameter('instance')).subscribe(r => this.response = r);
+    const instanceHandle = {
+      hookId: this.proxyClient.getParameter('hookId'),
+      hookInstance: this.proxyClient.getParameter('instance')
+    }
+
+    this.proxyClient.getResponse(instanceHandle).subscribe(r => this.response = r);
   }
 
 }

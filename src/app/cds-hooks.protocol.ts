@@ -2,6 +2,7 @@
  * Catalog of available CDS Hook services returned by discovery endpoint.
  */
 import {DomainResource} from '@uukmm/ng-fhir-model/r4';
+import {InstanceHandle} from './proxy-client';
 
 export interface CdsHooksCatalog {
   /**
@@ -121,7 +122,7 @@ export interface CdsHooksResponse {
    */
   cards: CdsHooksCard[];
 
-  _hookInstance?: string;
+  _instanceHandle?: InstanceHandle;
 }
 
 /**

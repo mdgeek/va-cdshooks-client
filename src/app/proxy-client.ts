@@ -3,10 +3,15 @@ import {HttpClient} from '@angular/common/http';
 import {filter, map, Observable, of, repeat, Subscription, switchMap, take, timeout} from 'rxjs';
 import {CdsHooksResponse} from './cds-hooks.protocol';
 
+export interface InstanceHandle {
+  hookId: string;
+  hookInstance: string;
+}
+
 @Injectable({providedIn: "root"})
 export class ProxyClient {
 
-  private readonly handle: string;
+  private readonly batchId: string;
 
   private readonly proxyUrl: string;
 
@@ -28,9 +33,9 @@ export class ProxyClient {
     }
 
     this.debug = this.parameters['debug'] != null;
-    this.handle = this.parameters['handle'];
+    this.batchId = this.parameters['handle'];
 
-    if (!this.hasSession && this.handle == null) {
+    if (!this.hasSession && this.batchId == null) {
       throw new Error('No handle specified in query string.');
     }
 
@@ -58,47 +63,48 @@ export class ProxyClient {
     })
   }
 
-  nextInstance(): Observable<string> {
-    const url: string = this.getProxyEndpoint('next/{0}', this.handle);
+  nextInstance(): Observable<InstanceHandle> {
+    const url: string = this.getProxyEndpoint('next/{0}', this.batchId);
     return this.httpClient.get(url, {
       observe: 'response',
-      responseType: 'text'
+      responseType: 'json'
     }).pipe(
       repeat({delay: 500, count: 50}),
-      map(r => r.ok ? r.body : null),
+      map(r => r.ok ? <InstanceHandle> r.body : null),
       timeout(20000),
-      filter(r => r !== ''),
+      filter(r => r != null),
       take(1)
     );
   }
 
-  getResponse(instance: string): Observable<CdsHooksResponse> {
-    const url: string = this.getProxyEndpoint('response/{0}/{1}', this.handle, instance);
+  getResponse(handle: InstanceHandle): Observable<CdsHooksResponse> {
+    const url: string = this.getProxyEndpoint('response/{0}/{1}', this.batchId, handle.hookInstance);
     return this.httpClient.get(url, {
       observe: 'body',
       responseType: 'json'
     }).pipe(map((r: any) => {
       const resp: CdsHooksResponse = r;
-      resp._hookInstance = instance;
+      resp._instanceHandle = handle;
       return resp;
     }));
   }
 
   nextResponse(): Observable<CdsHooksResponse> {
     return this.nextInstance().pipe(
-      switchMap(instance => instance == null ? of(null) : this.getResponse(instance))
+      switchMap(handle => handle == null ? of(null) : this.getResponse(handle))
     );
   }
 
   abortAll(): void {
-    const url: string = this.getProxyEndpoint('abort/{0}', this.handle);
+    const url: string = this.getProxyEndpoint('abort/{0}', this.batchId);
     const s: Subscription = this.httpClient.get(url).subscribe(_ => s.unsubscribe());
   }
 
-  createSessionParams(instance: string): any {
+  createSessionParams(instanceHandle: InstanceHandle): any {
     return {
       ...this.parameters,
-      instance
+      instance: instanceHandle.hookInstance,
+      hookId: instanceHandle.hookId
     }
   }
 }
