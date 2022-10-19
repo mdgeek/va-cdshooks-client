@@ -2,7 +2,6 @@
  * Catalog of available CDS Hook services returned by discovery endpoint.
  */
 import {DomainResource} from '@uukmm/ng-fhir-model/r4';
-import {InstanceHandle} from './proxy-client';
 
 export interface CdsHooksCatalog {
   /**
@@ -131,7 +130,7 @@ export interface CdsHooksResponse {
  */
 export interface CdsHooksCard {
   /**
-   * One-sentence, <140-character summary message for display to the user inside of this card.
+   * One-sentence, <140-character summary message for display to the user inside this card.
    */
   summary: string;
   /**
@@ -143,7 +142,7 @@ export interface CdsHooksCard {
    * Urgency/importance of what this card conveys. Allowed values, in order of increasing urgency, are:
    * info, warning, critical. The EHR MAY use this field to help make UI display decisions such as sort order or coloring.
    */
-  indicator: string;
+  indicator: 'info' | 'warning' | 'critical';
   /**
    * Grouping structure for the Source of the information displayed on this card. The source should be the primary source
    * of guidance for the decision support the card represents.
@@ -161,7 +160,7 @@ export interface CdsHooksCard {
    * specification may expand this behavior, so EHRs that do not understand the value MUST treat the card as an error.
    * EHRs MUST support the value of at-most-one.
    */
-  selectionBehavior?: string;
+  selectionBehavior?: 'at-most-one';
   /**
    * Allows a service to suggest a link to an app that the user might want to run for additional information or to help
    * guide a decision.
